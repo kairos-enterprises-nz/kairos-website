@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  kairos-web:
+    image: ghcr.io/your-org/kairos-website:${IMAGE_TAG:-latest}
+    networks:
+      - edge_net
+    expose:
+      - "80"
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      placement:
+        max_replicas_per_node: 1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  edge_net:
+    external: true
+    name: edge_net

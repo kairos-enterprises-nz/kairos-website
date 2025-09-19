@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  kairos-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kairos-spa:latest
+    container_name: kairos-web
+    restart: always
+    networks:
+      - caddy_net
+    ports:
+      - "3006:80"  # Local access
+    expose:
+      - "80"
+
+networks:
+  caddy_net:
+    external: true
+    name: caddy_net 
