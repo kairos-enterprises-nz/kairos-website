@@ -7,7 +7,9 @@ on:
       - 'src/**'
       - 'public/**'
       - 'Dockerfile'
+      - 'docker-compose.yml'
       - 'package*.json'
+      - '.github/workflows/**'
 
 jobs:
   deploy:
@@ -30,8 +32,9 @@ jobs:
       - name: Generate image tag
         id: tag
         run: |
-          echo "image_tag=main-${{ github.sha }}" >> $GITHUB_OUTPUT
-          echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          echo "image_tag=main-${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "short_sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
           
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -40,22 +43,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/kairos-website:${{ steps.tag.outputs.image_tag }}
+            ghcr.io/${{ github.repository_owner }}/kairos-website:main-latest
             ghcr.io/${{ github.repository_owner }}/kairos-website:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          
-      - name: Update deployment file
-        run: |
-          sed -i "s|\${IMAGE_TAG:-latest}|${{ steps.tag.outputs.image_tag }}|" deploy/production.yml
-          
-      - name: Commit deployment update
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add deploy/production.yml
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Deploy Kairos website ${{ steps.tag.outputs.short_sha }}"
-            git push
-          fi
