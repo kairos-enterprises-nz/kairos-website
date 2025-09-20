@@ -25,10 +25,7 @@ services:
         failure_action: pause
         monitor: 30s
         order: stop-first
-      placement:
-        max_replicas_per_node: 1
-        preferences:
-          - spread: node.id
+      placement: {}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1/health"]
       interval: 30s
