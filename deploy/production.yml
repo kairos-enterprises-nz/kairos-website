@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   kairos-web:
-    image: ghcr.io/your-org/kairos-website:${IMAGE_TAG:-latest}
+    image: ghcr.io/your-org/kairos-website:main-1166693cf488f842203f9a95e2c6f76d498bd6b0
     networks:
       - edge_net
     expose:
