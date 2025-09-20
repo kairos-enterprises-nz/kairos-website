@@ -17,6 +17,14 @@ services:
         parallelism: 1
         delay: 10s
         failure_action: rollback
+        order: start-first
+        monitor: 30s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: pause
+        monitor: 30s
+        order: stop-first
       placement:
         max_replicas_per_node: 1
         constraints:
