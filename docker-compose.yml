@@ -8,7 +8,7 @@ services:
     networks:
       - edge_net
     deploy:
-      replicas: 1
+      replicas: 2
       restart_policy:
         condition: any
         delay: 5s
@@ -17,6 +17,10 @@ services:
         parallelism: 1
         delay: 10s
         failure_action: rollback
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.role != manager
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1/health"]
       interval: 30s
