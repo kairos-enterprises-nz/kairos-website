@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  kairos-web:
+  kairos_web:
     image: ghcr.io/kairos-enterprises-nz/kairos-website:${IMAGE_TAG:-main-latest}
     ports:
       - "80"
@@ -22,11 +22,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.kairos.rule=Host(`kairos.yourdomain.com`)"
-      - "traefik.http.routers.kairos.tls=true"
-      - "traefik.http.services.kairos.loadbalancer.server.port=80"
 
 networks:
   edge_net:

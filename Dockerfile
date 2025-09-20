@@ -16,16 +16,28 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Stage 2: Serve with Caddy
-FROM caddy:2-alpine
+# Stage 2: Serve with nginx
+FROM nginx:alpine
 
-# Copy the built React app to Caddy's web root
-COPY --from=builder /app/build /usr/share/caddy
+# Copy the built React app to nginx web root
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# Copy Caddyfile
-COPY Caddyfile /etc/caddy/Caddyfile
+# Create simple nginx config for SPA
+RUN echo 'server { \
+    listen 80; \
+    server_name localhost; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+    } \
+    location /health { \
+        return 200 "healthy"; \
+        add_header Content-Type text/plain; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80
 
-# Caddy will automatically start with the Caddyfile 
+# nginx will start automatically 
