@@ -3,7 +3,7 @@ version: '3.8'
 services:
   kairos_web:
     image: ghcr.io/kairos-enterprises-nz/kairos-website:${IMAGE_TAG:-main-latest}
-    ports:
+    expose:
       - "80"
     networks:
       - edge_net
